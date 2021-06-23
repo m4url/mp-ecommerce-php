@@ -5,6 +5,11 @@ require __DIR__ .  '/vendor/autoload.php';
 MercadoPago\SDK::setAccessToken('APP_USR-6317427424180639-042414-47e969706991d3a442922b0702a0da44-469485398');
 MercadoPago\SDK::setIntegratorId('dev_24c65fb163bf11ea96500242ac130004');
 
+$imagen_url = "https://".$_SERVER['HTTP_HOST'].str_replace('./', '/', $_POST['img']);//$_POST['img'];
+$imagen_url = trim($imagen_url);
+$notify_url = "https://".$_SERVER['HTTP_HOST'].'/notifications.php';
+$root_url = "https://".$_SERVER['HTTP_HOST'];
+
 if($_SERVER['REQUEST_METHOD'] == 'POST')
 {
     // Crea un objeto de preferencia
@@ -34,9 +39,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
     "zip_code" => "1111"
     );
     $preference->back_urls = array(
-        "success" => "http://localhost:8080/feedback",
-        "failure" => "http://localhost:8080/feedback", 
-        "pending" => "http://localhost:8080/feedback"
+        "success" => $root_url.'/success',
+        "failure" => $root_url.'/failure',
+        "pending" => $root_url.'/pending'
     );
 
     $preference->auto_return = "approved"; 
@@ -46,14 +51,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
     $item->id = "1234";
     $item->title = filter_var($_POST['title'], FILTER_SANITIZE_STRING);
     $item->description = "Dispositivo móvil de Tienda e-commerce";
-    $item->picture_url = "";
+    $item->picture_url = $imagen_url;
     $item->quantity = filter_var($_POST['unit'], FILTER_SANITIZE_NUMBER_INT);
     $item->unit_price = filter_var($_POST['price'], FILTER_VALIDATE_FLOAT);
 
 
     $preference->items = array($item);
     $preference->external_reference = "ortigozamauricio@gmail.com";
-    $preference->notification_url = "";
+    $preference->notification_url = $notify_url;
     $preference->save();
 }
 
@@ -105,8 +110,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST')
 
 
 <body class="as-theme-light-heroimage">
-        
-        <?php echo $_SERVER['HTTP_HOST']; echo $_POST['img']; ?>
+    <?php echo $notifi_url; ?>
     <div class="stack">
         
         <div class="as-search-wrapper" role="main">
